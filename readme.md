@@ -2,21 +2,39 @@ Microsoft Internal Version
 
 This is a fork from [tomap's fork](https://github.com/tomap/SevenZipSharp) of the [original CodePlex project](https://archive.codeplex.com/?p=sevenzipsharp).
 
+-------------------------------------------------------------
+
+-------------------------------------------------------------
+
+-------------------------------------------------------------
+
+# Project Archived
+As of 2024-04-10, I've decided to officially release the final version of this fork - 1.6.2 - and archive the project. I myself don't use it anymore, and the sporadic bursts of activity from me aren't useful and I have a hard time even doing good code reviews on submitted code as I'm not actively working on this anymore.
+
+The bugs that exist will remain, feel free to fork this repository (as I once did from tomap) if you want to fix something.
+
+-------------------------------------------------------------
+
+-------------------------------------------------------------
+
+-------------------------------------------------------------
+
 ## Continuous Integration
 
-|   Branch  | Appveyor | Coveralls | NuGet | Lite NuGet |
-|-----------|----------|-----------|-------|------------|
-| master | [![Build status](https://ci.appveyor.com/api/projects/status/bgp7yh7f0fpamt95/branch/master?svg=true)](https://ci.appveyor.com/project/squid-box/sevenzipsharp/branch/master) | [![Coverage Status](https://coveralls.io/repos/github/squid-box/SevenZipSharp/badge.svg?branch=master)](https://coveralls.io/github/squid-box/SevenZipSharp?branch=master) | [![NuGet Badge](https://buildstats.info/nuget/Squid-Box.SevenZipSharp)](https://www.nuget.org/packages/Squid-Box.SevenZipSharp/) | [![NuGet Badge](https://buildstats.info/nuget/Squid-Box.SevenZipSharp.Lite)](https://www.nuget.org/packages/Squid-Box.SevenZipSharp.Lite/) |
-| dev | [![Build status](https://ci.appveyor.com/api/projects/status/bgp7yh7f0fpamt95/branch/dev?svg=true)](https://ci.appveyor.com/project/squid-box/sevenzipsharp/branch/dev) | [![Coverage Status](https://coveralls.io/repos/github/squid-box/SevenZipSharp/badge.svg?branch=dev)](https://coveralls.io/github/squid-box/SevenZipSharp?branch=dev) | 
+| Squid-Box.SevenZipSharp                                                                                                          | Squid-Box.SevenZipSharp.Lite                                                                                                               |
+|----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| [![NuGet Badge](https://buildstats.info/nuget/Squid-Box.SevenZipSharp)](https://www.nuget.org/packages/Squid-Box.SevenZipSharp/) | [![NuGet Badge](https://buildstats.info/nuget/Squid-Box.SevenZipSharp.Lite)](https://www.nuget.org/packages/Squid-Box.SevenZipSharp.Lite/) |
 
 ## Changes from original project
 As required by the GNU GPL 3.0 license, here's a rough list of what has changed since the original CodePlex project, including changes made in tomap's fork.
 
-* Target .NET framework changed from 2.0 to .NET 4.5, .NET Core 3.1 and .NET Standard 2.0 (ie. .NET Framework 4.5+, .Net Core 2.0+, Mono 5.4+, UWP 10.0.16299+, Unity 2018.1+).
-* Produces two multi-framework NuGet packages, one full-feature package and a `Lite` variant without SFX support (and significantly smaller size).
-* Continous Integration added, both building and deploying, and code test coverage.
+* Target .NET version changed from .NET Framework 2.0 to .NET Standard 2.0, .NET Framework 4.7.2 and .NET Core 3.1.
+* Produces two NuGet packages, one full-feature package and a `Lite` variant without SFX support (and significantly smaller size).
+* Continous Integration added, both building and deploying.
 * Tests re-written to NUnit 3 test cases.
 * General code cleanup.
+
+As well as a number of improvements and bug fixes.
 
 -------------------------------------------------------------
 
