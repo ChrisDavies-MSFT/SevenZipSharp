@@ -35,7 +35,7 @@ namespace SevenZip.Sdk
         /// <param name="outSize">
         /// Processed output size. -1 if unknown.
         /// </param>
-        void SetProgress(long inSize, long outSize);
+        void SetProgress(Int64 inSize, Int64 outSize);
     } ;
 
     /// <summary>
@@ -65,7 +65,7 @@ namespace SevenZip.Sdk
         /// if input stream is not valid
         /// </exception>
         void Code(Stream inStream, Stream outStream,
-                  long inSize, long outSize, ICodeProgress progress);
+                  Int64 inSize, Int64 outSize, ICodeProgress progress);
     } ;
 
     /*

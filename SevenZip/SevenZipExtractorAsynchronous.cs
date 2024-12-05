@@ -1,5 +1,6 @@
 namespace SevenZip
 {
+    using System;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -18,8 +19,7 @@ namespace SevenZip
                 NeedsToBeRecreated = false;
                 Stream backupStream = null;
                 string backupFileName = null;
-
-                if (string.IsNullOrEmpty(_fileName))
+                if (String.IsNullOrEmpty(_fileName))
                 {
                     backupStream = _inStream;
                 }
@@ -27,9 +27,7 @@ namespace SevenZip
                 {
                     backupFileName = _fileName;
                 }
-
                 CommonDispose();
-
                 if (backupStream == null)
                 {
                     Init(backupFileName);

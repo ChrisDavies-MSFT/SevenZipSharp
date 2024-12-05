@@ -137,9 +137,9 @@
                 return InArchiveFormat.Iso;
             }
 
-            if (SpecialDetect(stream, 0x200, InArchiveFormat.Gpt))
+            if (SpecialDetect(stream, 0x9001, InArchiveFormat.Iso))
             {
-                return InArchiveFormat.Gpt;
+                return InArchiveFormat.Iso;
             }
 
             if (SpecialDetect(stream, 0x400, InArchiveFormat.Hfs))
@@ -204,7 +204,7 @@
                     InArchiveFormat.Arj
                 })
                 {
-                    var pos = actualSignature.IndexOf(Formats.InSignatureFormatsReversed[format], StringComparison.InvariantCulture);
+                    var pos = actualSignature.IndexOf(Formats.InSignatureFormatsReversed[format]);
 
                     if (pos > -1)
                     {

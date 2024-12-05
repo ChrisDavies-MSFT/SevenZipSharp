@@ -83,7 +83,7 @@ namespace SevenZip
                 _baseStream = null;                                
             }    
             
-            if (!string.IsNullOrEmpty(_fileName) && File.Exists(_fileName))
+            if (!String.IsNullOrEmpty(_fileName) && File.Exists(_fileName))
             {
                 try
                 {
@@ -274,20 +274,19 @@ namespace SevenZip
 
         protected static string VolumeNumber(int num)
         {
-            string prefix;
             if (num < 10)
             {
-                prefix = ".00";
+                return ".00" + num.ToString(CultureInfo.InvariantCulture);
             }
-            else if (num < 100)
+            if (num > 9 && num < 100)
             {
-                prefix = ".0";
+                return ".0" + num.ToString(CultureInfo.InvariantCulture);
             }
-            else
+            if (num > 99 && num < 1000)
             {
-                prefix = ".";
+                return "." + num.ToString(CultureInfo.InvariantCulture);
             }
-            return prefix + num.ToString(CultureInfo.InvariantCulture);
+            return String.Empty;
         }
 
         private int StreamNumberByOffset(long offset)
@@ -347,7 +346,7 @@ namespace SevenZip
             int i = 0;
             while (File.Exists(fileName))
             {
-                Streams.Add(new FileStream(fileName, FileMode.Open, FileAccess.Read));
+                Streams.Add(new FileStream(fileName, FileMode.Open));
                 long length = Streams[i].Length;
                 StreamOffsets.Add(i++, new KeyValuePair<long, long>(StreamLength, StreamLength + length));
                 StreamLength += length;

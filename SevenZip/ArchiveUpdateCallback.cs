@@ -285,7 +285,6 @@ namespace SevenZip
                 var fiea = new FileNameEventArgs(_files != null? _files[index].Name : _entries[index],
                                                  PercentDoneEventArgs.ProducePercentDone(_doneRate));
                 OnFileCompression(fiea);
-                
                 if (fiea.Cancel)
                 {
                     Canceled = true;
@@ -315,17 +314,26 @@ namespace SevenZip
 
         private void OnFileCompression(FileNameEventArgs e)
         {
-            FileCompressionStarted?.Invoke(this, e);
+            if (FileCompressionStarted != null)
+            {
+                FileCompressionStarted(this, e);
+            }
         }
 
         private void OnCompressing(ProgressEventArgs e)
         {
-            Compressing?.Invoke(this, e);
+            if (Compressing != null)
+            {
+                Compressing(this, e);
+            }
         }
 
         private void OnFileCompressionFinished(EventArgs e)
         {
-            FileCompressionFinished?.Invoke(this, e);
+            if (FileCompressionFinished != null)
+            {
+                FileCompressionFinished(this, e);
+            }
         }
 
         #endregion
@@ -343,7 +351,7 @@ namespace SevenZip
                 case InternalCompressionMode.Create:
                     newData = 1;
                     newProperties = 1;
-                    indexInArchive = uint.MaxValue;
+                    indexInArchive = UInt32.MaxValue;
                     break;
                 case InternalCompressionMode.Append:
                     if (index < _indexInArchive)
@@ -356,7 +364,7 @@ namespace SevenZip
                     {
                         newData = 1;
                         newProperties = 1;
-                        indexInArchive = uint.MaxValue;
+                        indexInArchive = UInt32.MaxValue;
                     }
                     break;
                 case InternalCompressionMode.Modify:
@@ -366,20 +374,17 @@ namespace SevenZip
                     if (_updateData.FileNamesToModify.ContainsKey((int)index)
                         && _updateData.FileNamesToModify[(int)index] == null)
                     {
-                        indexInArchive = (uint)_updateData.ArchiveFileData.Count;
-
-                        foreach (var pairModification in _updateData.FileNamesToModify)
-                        {
-                            if (pairModification.Key <= index && (pairModification.Value == null))
+                        indexInArchive = (UInt32)_updateData.ArchiveFileData.Count;
+                        foreach (KeyValuePair<Int32, string> pairModification in _updateData.FileNamesToModify)
+                            if ((pairModification.Key <= index) && (pairModification.Value == null))
                             {
                                 do
                                 {
                                     indexInArchive--;
-                                } while (indexInArchive > 0 
-                                         && _updateData.FileNamesToModify.ContainsKey((int)indexInArchive)
-                                         && _updateData.FileNamesToModify[(int)indexInArchive] == null);
+                                }
+                                while ((indexInArchive > 0) && _updateData.FileNamesToModify.ContainsKey((Int32)indexInArchive)
+                                    && (_updateData.FileNamesToModify[(Int32)indexInArchive] == null));
                             }
-                        }
                     }
                     else
                     {
@@ -387,7 +392,6 @@ namespace SevenZip
                     }
                     break;
             }
-
             return 0;
         }
 
@@ -472,7 +476,7 @@ namespace SevenZip
                         #region Size
 
                         value.VarType = VarEnum.VT_UI8;
-                        ulong size;
+                        UInt64 size;
                         if (_updateData.Mode != InternalCompressionMode.Modify)
                         {
                             if (_files == null)
@@ -735,9 +739,8 @@ namespace SevenZip
 
         public int CryptoGetTextPassword2(ref int passwordIsDefined, out string password)
         {
-            passwordIsDefined = string.IsNullOrEmpty(Password) ? 0 : 1;
+            passwordIsDefined = String.IsNullOrEmpty(Password) ? 0 : 1;
             password = Password;
-
             return 0;
         }
 
@@ -758,19 +761,19 @@ namespace SevenZip
                 catch (ObjectDisposedException) {}
             }
 
-            if (_wrappersToDispose == null)
+            if (_wrappersToDispose != null)
             {
-                return;
+                foreach (var wrapper in _wrappersToDispose)
+                {
+                    try
+                    {
+                        wrapper.Dispose();
+                    }
+                    catch (ObjectDisposedException) {}
+                }
             }
 
-            foreach (var wrapper in _wrappersToDispose)
-            {
-                try
-                {
-                    wrapper.Dispose();
-                }
-                catch (ObjectDisposedException) {}
-            }
+            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -781,23 +784,23 @@ namespace SevenZip
 
             lock (lockObject)
             {
-                var pOld = (byte) (_bytesWrittenOld*100/_bytesCount);
+                var pold = (byte) (_bytesWrittenOld*100/_bytesCount);
                 _bytesWritten += e.Value;
-                byte pNow;
+                byte pnow;
 
                 if (_bytesCount < _bytesWritten) //Holy shit, this check for ZIP is golden
                 {
-                    pNow = 100;
+                    pnow = 100;
                 }
                 else
                 {
-                    pNow = (byte)((_bytesWritten * 100) / _bytesCount);
+                    pnow = (byte)((_bytesWritten * 100) / _bytesCount);
                 }
 
-                if (pNow > pOld)
+                if (pnow > pold)
                 {
                     _bytesWrittenOld = _bytesWritten;
-                    OnCompressing(new ProgressEventArgs(pNow, (byte) (pNow - pOld)));
+                    OnCompressing(new ProgressEventArgs(pnow, (byte) (pnow - pold)));
                 }
             }
         }

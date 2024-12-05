@@ -12,7 +12,7 @@ namespace SevenZip
     public class CompressionFailedException : SevenZipException
     {
         /// <summary>
-        /// Exception default message which is displayed if no extra information is specified
+        /// Exception dafault message which is displayed if no extra information is specified
         /// </summary>
         public const string DEFAULT_MESSAGE = "Could not pack files!";
 
@@ -31,7 +31,7 @@ namespace SevenZip
         /// Initializes a new instance of the CompressionFailedException class
         /// </summary>
         /// <param name="message">Additional detailed message</param>
-        /// <param name="inner">Inner exception occurred</param>
+        /// <param name="inner">Inner exception occured</param>
         public CompressionFailedException(string message, Exception inner) : base(DEFAULT_MESSAGE, message, inner) { }
 
         /// <summary>

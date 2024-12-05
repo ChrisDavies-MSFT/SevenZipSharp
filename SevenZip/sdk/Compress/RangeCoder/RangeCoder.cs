@@ -9,7 +9,7 @@ namespace SevenZip.Sdk.Compression.RangeCoder
         private byte _cache;
         private uint _cacheSize;
 
-        public ulong Low;
+        public UInt64 Low;
         public uint Range;
 
         private long StartPosition;

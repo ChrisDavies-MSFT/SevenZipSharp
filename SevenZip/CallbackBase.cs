@@ -8,18 +8,22 @@ namespace SevenZip
 
     internal class CallbackBase : MarshalByRefObject
     {
+        private readonly string _password;
+        private readonly bool _reportErrors;
+
         /// <summary>
         /// User exceptions thrown during the requested operations, for example, in events.
         /// </summary>
         private readonly List<Exception> _exceptions = new List<Exception>();
-        
+
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the CallbackBase class.
         /// </summary>
         protected CallbackBase()
         {
-            Password = "";
-            ReportErrors = true;
+            _password = "";
+            _reportErrors = true;
         }
 
         /// <summary>
@@ -28,19 +32,19 @@ namespace SevenZip
         /// <param name="password">The archive password.</param>
         protected CallbackBase(string password)
         {
-            if (string.IsNullOrEmpty(password))
+            if (String.IsNullOrEmpty(password))
             {
                 throw new SevenZipException("Empty password was specified.");
             }
-
-            Password = password;
-            ReportErrors = true;
+            _password = password;
+            _reportErrors = true;
         }
+        #endregion
 
         /// <summary>
         /// Gets or sets the archive password
         /// </summary>
-        public string Password { get; }
+        public string Password => _password;
 
         /// <summary>
         /// Gets or sets the value indicating whether the current procedure was cancelled.
@@ -50,7 +54,7 @@ namespace SevenZip
         /// <summary>
         /// Gets or sets throw exceptions on archive errors flag
         /// </summary>
-        public bool ReportErrors { get; }
+        public bool ReportErrors => _reportErrors;
 
         /// <summary>
         /// Gets the user exceptions thrown during the requested operations, for example, in events.
@@ -76,11 +80,10 @@ namespace SevenZip
         /// <param name="handler">The handler responsible for the exception.</param>
         public bool ThrowException(CallbackBase handler, params Exception[] e)
         {
-            if (ReportErrors && (handler == null || !handler.Canceled))
+            if (_reportErrors && (handler == null || !handler.Canceled))
             {
                 throw e[0];
             }
-
             return false;
         }
 
@@ -90,11 +93,10 @@ namespace SevenZip
         /// <returns>True means no exceptions.</returns>
         public bool ThrowException()
         {
-            if (HasExceptions && ReportErrors)
+            if (HasExceptions && _reportErrors)
             {
                 throw _exceptions[0];
             }
-
             return true;
         }
 

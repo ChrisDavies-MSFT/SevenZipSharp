@@ -5,6 +5,8 @@
     /// </summary>
     public sealed class ProgressEventArgs : PercentDoneEventArgs
     {
+        private readonly byte _delta;
+
         /// <summary>
         /// Initializes a new instance of the ProgressEventArgs class.
         /// </summary>
@@ -13,12 +15,12 @@
         public ProgressEventArgs(byte percentDone, byte percentDelta)
             : base(percentDone)
         {
-            PercentDelta = percentDelta;
+            _delta = percentDelta;
         }
 
         /// <summary>
         /// Gets the change in done work percentage.
         /// </summary>
-        public byte PercentDelta { get; }
+        public byte PercentDelta => _delta;
     }
 }

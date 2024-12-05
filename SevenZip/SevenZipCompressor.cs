@@ -6,7 +6,7 @@ namespace SevenZip
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
-#if NET472 || NETSTANDARD2_0
+#if NET45 || NETSTANDARD2_0
     using System.Security.Permissions;
 #endif
 
@@ -311,8 +311,8 @@ namespace SevenZip
                     var names = new List<IntPtr>(2 + CustomParameters.Count);
                     var values = new List<PropVariant>(2 + CustomParameters.Count);
 
-#if NET472 || NETSTANDARD2_0
-                        var sp = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
+#if NET45 || NETSTANDARD2_0
+                    var sp = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
                     sp.Demand();
 #endif
 
@@ -1202,8 +1202,6 @@ namespace SevenZip
                     return;
                 }
             }
-            
-            UpdateCompressorPassword(password);
 
             if (_volumeSize == 0 || !_compressingFilesOnDisk)
             {
@@ -1372,11 +1370,7 @@ namespace SevenZip
             if (PreserveDirectoryRoot)
             {
                 var upperRoot = Path.GetDirectoryName(directory);
-
-                if (upperRoot != null)
-                {
-                    commonRootLength = upperRoot.Length + (upperRoot.EndsWith("\\", StringComparison.OrdinalIgnoreCase) ? 0 : 1);
-                }
+                commonRootLength = upperRoot.Length + (upperRoot.EndsWith("\\", StringComparison.OrdinalIgnoreCase) ? 0 : 1);
             }
 
             _directoryCompress = true;
@@ -1505,9 +1499,7 @@ namespace SevenZip
             {
                 ValidateStream(archiveStream);
             }
-            
-            UpdateCompressorPassword(password);
-            
+
             if (streamDictionary.Where(
                 pair => pair.Value != null && (!pair.Value.CanSeek || !pair.Value.CanRead)).Any(
                 pair => !ThrowException(null,
@@ -1672,7 +1664,11 @@ namespace SevenZip
                 }
             }
 
-            UpdateCompressorPassword(password);
+            if (!string.IsNullOrEmpty(password) && string.IsNullOrEmpty(Password))
+            {
+                // When modifying an encrypted archive, Password is not set in the SevenZipCompressor.
+                Password = password;
+            }
 
             try
             {
@@ -1865,19 +1861,6 @@ namespace SevenZip
         private static string[] GetFullFilePaths(IEnumerable<string> fileFullNames)
         {
             return fileFullNames.Select(Path.GetFullPath).ToArray();
-        }
-        
-        /// <summary>
-        /// Check and update password in SevenZipCompressor
-        /// </summary>
-        /// <param name="password">The password to use.</param>
-        private void UpdateCompressorPassword(string password)
-        {
-            if (!string.IsNullOrEmpty(password) && string.IsNullOrEmpty(Password))
-            {
-                // When modifying an encrypted archive, Password is not set in the SevenZipCompressor.
-                Password = password;
-            }
         }
     }
 }

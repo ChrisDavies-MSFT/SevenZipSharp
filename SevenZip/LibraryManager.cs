@@ -4,7 +4,7 @@ namespace SevenZip
     using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics;
-#if NET472 || NETSTANDARD2_0
+#if NET45 || NETSTANDARD2_0
     using System.Security.Permissions;
 #endif
     using System.IO;
@@ -21,7 +21,7 @@ namespace SevenZip
         /// <summary>
         /// Synchronization root for all locking.
         /// </summary>
-        private static readonly object SyncRoot = new object();
+        private static readonly object _syncRoot = new object();
 
         /// <summary>
         /// Path to the 7-zip dll.
@@ -106,7 +106,7 @@ namespace SevenZip
         /// <param name="format">Archive format</param>
         public static void LoadLibrary(object user, Enum format)
         {
-            lock (SyncRoot)
+            lock (_syncRoot)
             {
                 if (_inArchives == null || _outArchives == null)
                 {
@@ -160,7 +160,7 @@ namespace SevenZip
         {
             get
             {
-                lock (SyncRoot)
+                lock (_syncRoot)
                 {
                     if (!_modifyCapable.HasValue)
                     {
@@ -225,9 +225,9 @@ namespace SevenZip
         {
             get
             {
-                lock (SyncRoot)
+                lock (_syncRoot)
                 {
-                    if (_features.HasValue)
+                    if (_features != null && _features.HasValue)
                     {
                         return _features.Value;
                     }
@@ -287,16 +287,16 @@ namespace SevenZip
 
                             var i = 0;
 
-                            if (_features != null && CompressionBenchmark(inStream, outStream,
-                                    OutArchiveFormat.SevenZip, CompressionMethod.BZip2,
-                                    ref _features, _features.Value))
+                            if (CompressionBenchmark(inStream, outStream,
+                                OutArchiveFormat.SevenZip, CompressionMethod.BZip2,
+                                ref _features, _features.Value))
                             {
                                 i++;
                             }
 
-                            if (_features != null && CompressionBenchmark(inStream, outStream,
-                                    OutArchiveFormat.SevenZip, CompressionMethod.Ppmd,
-                                    ref _features, _features.Value))
+                            if (CompressionBenchmark(inStream, outStream,
+                                OutArchiveFormat.SevenZip, CompressionMethod.Ppmd,
+                                ref _features, _features.Value))
                             {
                                 i++;
                                 if (i == 2 && (_features & LibraryFeature.Compress7z) != 0 &&
@@ -328,7 +328,7 @@ namespace SevenZip
 
                     #endregion
 
-                    if (_features != null && ModifyCapable && (_features.Value & LibraryFeature.Compress7z) != 0)
+                    if (ModifyCapable && (_features.Value & LibraryFeature.Compress7z) != 0)
                     {
                         _features |= LibraryFeature.Modify;
                     }
@@ -345,11 +345,11 @@ namespace SevenZip
         /// <param name="format">Archive format</param>
         public static void FreeLibrary(object user, Enum format)
         {
-#if NET472 || NETSTANDARD2_0
+#if NET45 || NETSTANDARD2_0
             var sp = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
             sp.Demand();
 #endif
-            lock (SyncRoot)
+            lock (_syncRoot)
 			{
                 if (_modulePtr != IntPtr.Zero)
                 {
@@ -419,11 +419,11 @@ namespace SevenZip
         /// <param name="user">Archive format user.</param>
         public static IInArchive InArchive(InArchiveFormat format, object user)
         {
-            lock (SyncRoot)
+            lock (_syncRoot)
             {
-                if (!_inArchives.ContainsKey(user) || _inArchives[user][format] == null)
+                if (_inArchives[user][format] == null)
                 {
-#if NET472 || NETSTANDARD2_0
+#if NET45 || NETSTANDARD2_0
                     var sp = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
                     sp.Demand();
 #endif
@@ -450,11 +450,11 @@ namespace SevenZip
 
                     object result;
                     var interfaceId = typeof(IInArchive).GUID;
-                    var classId = Formats.InFormatGuids[format];
+                    var classID = Formats.InFormatGuids[format];
 
                     try
                     {
-                        createObject(ref classId, ref interfaceId, out result);
+                        createObject(ref classID, ref interfaceId, out result);
                     }
                     catch (Exception)
                     {
@@ -476,11 +476,11 @@ namespace SevenZip
         /// <param name="user">Archive format user.</param>
         public static IOutArchive OutArchive(OutArchiveFormat format, object user)
         {
-            lock (SyncRoot)
+            lock (_syncRoot)
             {
                 if (_outArchives[user][format] == null)
                 {
-#if NET472 || NETSTANDARD2_0
+#if NET45 || NETSTANDARD2_0
                     var sp = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
                     sp.Demand();
 #endif

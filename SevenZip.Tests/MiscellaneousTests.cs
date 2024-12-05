@@ -4,6 +4,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
+
     using NUnit.Framework;
 
     using SevenZip;
@@ -53,13 +54,6 @@
                 Assert.AreEqual("zip.zip", extractor.ArchiveFileNames[0]);
             }
 
-            if (sfxModule == SfxModule.Installer)
-            {
-                // Installer modules need to be run with elevation.
-                Assert.Pass("Assume SFX installer works...");
-                return;
-            }
-
             Assert.DoesNotThrow(() =>
             {
                 var process = Process.Start(sfxFile);
@@ -95,7 +89,6 @@
                 var decoder = new LzmaDecodeStream(input);
                 using (var output = new FileStream(newZip, FileMode.Create))
                 {
-
                     int bufSize = 24576, count;
                     var buf = new byte[bufSize];
 
@@ -110,7 +103,6 @@
 
             using (var extractor = new SevenZipExtractor(newZip))
             {
-
                 Assert.AreEqual(1, extractor.FilesCount);
                 Assert.AreEqual("zip.txt", extractor.ArchiveFileNames[0]);
             }

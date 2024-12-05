@@ -42,9 +42,9 @@
                 {
                     extractor.ExtractFiles(OutputDirectory, extractor.ArchiveFileData[i].Index);
                 }
-            }
 
-            Assert.AreEqual(3, Directory.GetFiles(OutputDirectory).Length);
+                Assert.AreEqual(3, Directory.GetFiles(OutputDirectory).Length);
+            }
         }
 
         [Test]
@@ -78,18 +78,18 @@
         {
             using (var tmp = new SevenZipExtractor(@"TestData\multiple_files.7z"))
             {
-                tmp.FileExtractionStarted += (_, args) =>
+                tmp.FileExtractionStarted += (s, e) =>
                 {
-                    if (args.FileInfo.Index == 2)
+                    if (e.FileInfo.Index == 2)
                     {
-                        args.Cancel = true;
+                        e.Cancel = true;
                     }
                 };
-
+               
                 tmp.ExtractArchive(OutputDirectory);
-            }
 
-            Assert.AreEqual(2, Directory.GetFiles(OutputDirectory).Length);
+                Assert.AreEqual(2, Directory.GetFiles(OutputDirectory).Length);
+            }
         }
 
         [Test]
@@ -97,18 +97,18 @@
         {
             using (var tmp = new SevenZipExtractor(@"TestData\multiple_files.7z"))
             {
-                tmp.FileExtractionStarted += (_, args) =>
-                {
-                    if (args.FileInfo.Index == 1)
-                    {
-                        args.Skip = true;
-                    }
-                };
+                tmp.FileExtractionStarted += (s, e) =>
+                                             {
+                                                 if (e.FileInfo.Index == 1)
+                                                 {
+                                                     e.Skip = true;
+                                                 }
+                                             };
 
                 tmp.ExtractArchive(OutputDirectory);
-            }
 
-            Assert.AreEqual(2, Directory.GetFiles(OutputDirectory).Length);
+                Assert.AreEqual(2, Directory.GetFiles(OutputDirectory).Length);
+            }
         }
 
         [Test]
@@ -120,27 +120,6 @@
             {
                 tmp.ExtractArchive(OutputDirectory);
                 Assert.AreEqual(3, Directory.GetFiles(OutputDirectory).Length);
-            }
-        }
-
-        [Test]
-        public void ExtractionFromStream_LeaveStreamOpenTest()
-        {
-            using (var fileStream = new FileStream(@"TestData\multiple_files.7z", FileMode.Open))
-            {
-                using (var extractor1 = new SevenZipExtractor(fileStream, leaveOpen: true))
-                {
-                    extractor1.ExtractArchive(OutputDirectory);
-
-                    Assert.IsTrue(fileStream.CanRead);
-                }
-
-                using (var extractor2 = new SevenZipExtractor(fileStream, leaveOpen: false))
-                {
-                    extractor2.ExtractArchive(OutputDirectory);
-                }
-
-                Assert.IsFalse(fileStream.CanRead);
             }
         }
 
@@ -193,8 +172,8 @@
             });
             var t2 = new Thread(() =>
             {
-                using (var tmp = new SevenZipExtractor(@"TestData\multiple_files.7z"))
-                {
+				using (var tmp = new SevenZipExtractor(@"TestData\multiple_files.7z"))
+				{
                     tmp.ExtractArchive(destination2);
                 }
             });
@@ -210,7 +189,7 @@
 	        Assert.AreEqual(3, Directory.GetFiles(destination2).Length);
 		}
 
-        [Test, Ignore("Figure out why this fails, later.")]
+        [Test]
         public void ExtractArchiveWithLongPath()
         {
             using (var extractor = new SevenZipExtractor(@"TestData\long_path.7z"))
@@ -232,7 +211,7 @@
                 Assert.AreEqual("file3.txt", fileNames[2]);
             }
         }
-
+        
         [Test]
         public void ReadArchivedFileData()
         {
@@ -253,9 +232,8 @@
             using (var extractor = new SevenZipExtractor(file.FilePath))
             {
                 extractor.ExtractArchive(OutputDirectory);
+                Assert.AreEqual(1, Directory.GetFiles(OutputDirectory).Length);
             }
-
-            Assert.AreEqual(1, Directory.GetFiles(OutputDirectory).Length);
         }
     }
 
